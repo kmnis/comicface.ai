@@ -90,7 +90,7 @@ class Pix2PixModel(object):
         step = 0
         for epoch in range(self.epochs):
             for input_image, target_image in train_ds:
-                if (step % 100 == 0) and (step != 0):
+                if step % 100 == 0:
                     generate_images(self.generator, example_input, example_target, self.save_path, step//100)
                 
                 gen_loss, disc_loss = self.train_step(input_image, target_image)
@@ -100,7 +100,7 @@ class Pix2PixModel(object):
                     tf.summary.scalar('discriminator_loss', disc_loss, step=step)
                 
                 # Save (checkpoint) the model every 5k steps
-                if (step + 1) % 100 == 0:
+                if (step + 1) % 500 == 0:
                     self.checkpoint.save(file_prefix=self.checkpoint_dir)
                     self.generator.save(f"{self.save_dir}/pix2pix.keras")
                 

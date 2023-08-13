@@ -20,18 +20,20 @@ def get_dirs(save_dir):
 
 def generate_images(model, test_input, target, save_path, step):
     prediction = model(test_input)
-    plt.figure(figsize=(9, 3))
+    
+    if step % 500 == 0:
+        plt.figure(figsize=(9, 3))
 
-    display_list = [test_input[0], target[0], prediction[0]]
-    title = ['Input Image', 'Ground Truth', 'Predicted Image']
+        display_list = [test_input[0], target[0], prediction[0]]
+        title = ['Input Image', 'Ground Truth', 'Predicted Image']
 
-    for i in range(3):
-        plt.subplot(1, 3, i+1)
-        plt.title(title[i])
-        plt.imshow(display_list[i] * 0.5 + 0.5)
-        plt.axis('off')
-    plt.tight_layout()
-    plt.show()
+        for i in range(3):
+            plt.subplot(1, 3, i+1)
+            plt.title(title[i])
+            plt.imshow(display_list[i] * 0.5 + 0.5)
+            plt.axis('off')
+        plt.tight_layout()
+        plt.show()
     
     try:
         img = array_to_img(prediction[0] * 0.5 + 0.5)
