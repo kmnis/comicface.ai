@@ -92,7 +92,7 @@ class Pix2PixModel(object):
                 if (step % 100 == 0) and (step != 0):
                     generate_images(self.generator, example_input, example_target, self.save_path, step//100)
                 
-                gen_loss, disc_loss = self.train_step(input_image, target_image, step)
+                gen_loss, disc_loss = self.train_step(input_image, target_image)
                 
                 with self.summary_writer.as_default():
                     tf.summary.scalar('generator_loss', gen_loss, step=step)
