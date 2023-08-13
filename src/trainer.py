@@ -32,17 +32,17 @@ class Pix2PixModel(object):
         self.epochs = epochs
         self.enable_function = enable_function
         self.lambda_value = 100
-        
+
         self.save_dir = save_dir
         self.checkpoint_dir, self.log_dir, self.save_path = get_dirs(self.save_dir)
-        
+
         self.loss_object = tf.keras.losses.BinaryCrossentropy(from_logits=True)
         self.generator_optimizer = tf.keras.optimizers.Adam(2e-4, beta_1=0.5)
         self.discriminator_optimizer = tf.keras.optimizers.Adam(2e-4, beta_1=0.5)
-        
+
         self.generator = pix2pix_generator()
         self.discriminator = pix2pix_discriminator()
-        
+
         self.checkpoint = tf.train.Checkpoint(
             generator_optimizer=self.generator_optimizer,
             discriminator_optimizer=self.discriminator_optimizer,
@@ -85,28 +85,28 @@ class Pix2PixModel(object):
         example_input, example_target = next(iter(test_ds.take(1)))
         start = time.time()
 
-        steps = int(9000/BATCH_SIZE) * self.epochs
+        steps = int(9000 / BATCH_SIZE) * self.epochs
         pbar = tqdm(total=steps)
         step = 0
         for epoch in range(self.epochs):
             for input_image, target_image in train_ds:
                 if step % 100 == 0:
-                    generate_images(self.generator, example_input, example_target, self.save_path, step//100)
-                
+                    generate_images(self.generator, example_input, example_target, self.save_path, step // 100)
+
                 gen_loss, disc_loss = self.train_step(input_image, target_image)
-                
+
                 with self.summary_writer.as_default():
                     tf.summary.scalar('generator_loss', gen_loss, step=step)
                     tf.summary.scalar('discriminator_loss', disc_loss, step=step)
-                
+
                 # Save (checkpoint) the model every 5k steps
                 if (step + 1) % 500 == 0:
                     self.checkpoint.save(file_prefix=self.checkpoint_dir)
                     self.generator.save(f"{self.save_dir}/pix2pix.keras")
-                
+
                 step += 1
                 pbar.update()
-            
+
             self.generator.save(f"{self.save_dir}/pix2pix.keras")
 
         self.generator.save(f"{self.save_dir}/pix2pix.keras")

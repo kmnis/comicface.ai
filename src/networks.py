@@ -1,7 +1,7 @@
 import tensorflow as tf
 
-
 OUTPUT_CHANNELS = 3
+
 
 def downsample(filters, size, apply_batchnorm=True):
     initializer = tf.random_normal_initializer(0., 0.02)
