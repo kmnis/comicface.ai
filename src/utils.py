@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 from tensorflow.keras.utils import array_to_img
 
 
-def get_dirs(save_path):
-    checkpoint_dir = os.path.join(save_dir, "model_ckpts")
+def get_dirs(save_dir):
+    checkpoint_dir = os.path.join(save_dir, "model_ckpts/ckpts")
     log_dir = os.path.join(save_dir, "tf_logs")
     save_path = os.path.join(save_dir, "training_progress")
     
@@ -20,7 +20,7 @@ def get_dirs(save_path):
 
 def generate_images(model, test_input, target, save_path, step):
     prediction = model(test_input)
-    plt.figure(figsize=(12, 4))
+    plt.figure(figsize=(9, 3))
 
     display_list = [test_input[0], target[0], prediction[0]]
     title = ['Input Image', 'Ground Truth', 'Predicted Image']

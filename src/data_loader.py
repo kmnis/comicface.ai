@@ -4,7 +4,7 @@ import tensorflow as tf
 
 # Define Training variable
 BUFFER_SIZE = 400
-BATCH_SIZE = 1
+BATCH_SIZE = 32
 IMG_WIDTH = 256
 IMG_HEIGHT = 256
 AUTOTUNE = tf.data.AUTOTUNE
