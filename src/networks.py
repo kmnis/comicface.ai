@@ -1,6 +1,6 @@
 import tensorflow as tf
-
-OUTPUT_CHANNELS = 3
+from tensorflow.keras.layers import Input, Conv2D, Conv2DTranspose, Dense, Flatten, Reshape, Lambda
+from tensorflow.keras.models import Model
 
 
 def downsample(filters, size, apply_batchnorm=True):
@@ -64,7 +64,7 @@ def pix2pix_generator():
     ]
 
     initializer = tf.random_normal_initializer(0., 0.02)
-    last = tf.keras.layers.Conv2DTranspose(OUTPUT_CHANNELS, 4,
+    last = tf.keras.layers.Conv2DTranspose(3, 4,
                                            strides=2,
                                            padding='same',
                                            kernel_initializer=initializer,
@@ -117,3 +117,38 @@ def pix2pix_discriminator():
                                   kernel_initializer=initializer)(zero_pad2)  # (batch_size, 30, 30, 1)
 
     return tf.keras.Model(inputs=[inp, tar], outputs=last)
+
+
+def sampling(args):
+    z_mean, z_log_var, latent_dim = args
+    epsilon = tf.keras.backend.random_normal(shape=(tf.shape(z_mean)[0], latent_dim))
+    return z_mean + tf.exp(0.5 * z_log_var) * epsilon
+
+
+def vae_encoder(latent_dim):
+    encoder_input = Input(shape=(256, 256, 3))
+    x = Conv2D(32, (3, 3), activation='relu', strides=2, padding='same')(encoder_input)
+    x = Conv2D(64, (3, 3), activation='relu', strides=2, padding='same')(x)
+    x = Conv2D(256, (3, 3), activation='relu', strides=2, padding='same')(x)
+    x = Flatten()(x)
+
+    z_mean = Dense(latent_dim)(x)
+    z_log_var = Dense(latent_dim)(x)
+
+    z = Lambda(sampling)([z_mean, z_log_var, latent_dim])
+
+    encoder = Model(encoder_input, [z_mean, z_log_var, z], name='encoder')
+    return encoder
+
+
+def vae_decoder(latent_dim):
+    decoder_input = Input(shape=(latent_dim,))
+    x = Dense(16 * 16 * 256)(decoder_input)
+    x = Reshape((16, 16, 256))(x)
+    x = Conv2DTranspose(256, (3, 3), activation='relu', strides=2, padding='same')(x)
+    x = Conv2DTranspose(64, (3, 3), activation='relu', strides=2, padding='same')(x)
+    x = Conv2DTranspose(32, (3, 3), activation='relu', strides=4, padding='same')(x)
+    decoder_output = Conv2DTranspose(3, (3, 3), padding='same', activation="tanh")(x)
+
+    decoder = Model(decoder_input, decoder_output, name='decoder')
+    return decoder

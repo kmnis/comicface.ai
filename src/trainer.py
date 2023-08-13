@@ -4,8 +4,10 @@ from datetime import datetime
 from tqdm.notebook import tqdm
 
 import tensorflow as tf
+from tensorflow.keras.layers import Input
+from tensorflow.keras.models import Model
 
-from .networks import pix2pix_generator, pix2pix_discriminator
+from .networks import pix2pix_generator, pix2pix_discriminator, vae_encoder, vae_decoder
 from .data_loader import data_loader, BATCH_SIZE
 from .losses import generator_loss, discriminator_loss
 from .utils import generate_images, get_dirs
@@ -113,6 +115,52 @@ class Pix2PixModel(object):
         return self.generator
 
 
+class VAE():
+    def __init__(self, latent_dim=256):
+        self.latent_dim = latent_dim
+        self.encoder = vae_encoder(self.latent_dim)
+        self.decoder = vae_decoder(self.latent_dim)
+        self.callback = tf.keras.callbacks.EarlyStopping(
+            monitor="val_loss",
+            patience=10,
+            restore_best_weights=True
+        )
+        
+    def build_vae(self):
+        encoder_input = Input(shape=(256, 256, 3))
+        z_mean, z_log_var, z = self.encoder(encoder_input)
+        vae_output = self.decoder(z)
+        vae = Model(encoder_input, vae_output, name='vae')
+        return vae
+    
+    def train(self, data=None, epochs=100, save_path="../saved_models/vae/vae.keras"):
+        model = self.build_vae()
+        
+        if data is None:
+            train_ds, test_ds = data_loader()
+        else:
+            train_ds, test_ds = data
+        
+        # Build and compile the VAE model
+        model.compile(optimizer='adam', loss='mean_squared_error')
+
+        # Train the VAE model with validation
+        history = model.fit(
+            train_ds,
+            epochs=epochs,
+            validation_data=test_ds,
+            callbacks=[self.callback]
+        )
+        
+        model.save(save_path)
+        return history, model
+
+
 if __name__ == "__main__":
+    # Train Pix2Pix model
     model = Pix2PixModel()
     model.train()
+    
+    # Train VAE model
+    # vae_model = VAE()
+    # model = vae_model.train()
