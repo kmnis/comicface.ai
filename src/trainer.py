@@ -6,7 +6,7 @@ from tqdm.notebook import tqdm
 import tensorflow as tf
 
 from .networks import pix2pix_generator, pix2pix_discriminator
-from .data_loader import data_loader
+from .data_loader import data_loader, BATCH_SIZE
 from .losses import generator_loss, discriminator_loss
 from .utils import generate_images, get_dirs
 
@@ -73,7 +73,7 @@ class Pix2PixModel(object):
 
         return gen_loss, disc_loss
 
-    def train(self, data=None, steps=8000):
+    def train(self, data=None):
         if self.enable_function:
             self.train_step = tf.function(self.train_step)
 
@@ -85,6 +85,7 @@ class Pix2PixModel(object):
         example_input, example_target = next(iter(test_ds.take(1)))
         start = time.time()
 
+        steps = int(9000/BATCH_SIZE) * self.epochs
         pbar = tqdm(total=steps)
         step = 0
         for epoch in range(self.epochs):
@@ -99,17 +100,16 @@ class Pix2PixModel(object):
                     tf.summary.scalar('discriminator_loss', disc_loss, step=step)
                 
                 # Save (checkpoint) the model every 5k steps
-                if (step + 1) % 1000 == 0:
-                    self.checkpoint.save(file_prefix=self.checkpoint_dir)
                 if (step + 1) % 100 == 0:
-                    self.encoder.save(f"{self.save_dir}/pix2pix.keras")
+                    self.checkpoint.save(file_prefix=self.checkpoint_dir)
+                    self.generator.save(f"{self.save_dir}/pix2pix.keras")
                 
                 step += 1
                 pbar.update()
             
-            self.encoder.save(f"{self.save_dir}/pix2pix.keras")
+            self.generator.save(f"{self.save_dir}/pix2pix.keras")
 
-        self.encoder.save(f"{self.save_dir}/pix2pix.keras")
+        self.generator.save(f"{self.save_dir}/pix2pix.keras")
         return self.generator
 
 
