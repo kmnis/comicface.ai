@@ -84,23 +84,21 @@ def create_image_loader(path):
     images = [os.path.join(path, p) for p in images]
     images.sort()
 
-    # split the images in train, val and test
+    # split the images in train and test
     total_images = len(images)
-    train = images[: int(0.8 * total_images)]
-    val = images[int(0.8 * total_images) : int(0.9 * total_images)]
+    train = images[: int(0.9 * total_images)]
     test = images[int(0.9 * total_images) :]
 
     # Build the tf.data datasets.
     train_ds = tf.data.Dataset.from_tensor_slices(train)
-    val_ds = tf.data.Dataset.from_tensor_slices(val)
     test_ds = tf.data.Dataset.from_tensor_slices(test)
 
-    return train_ds, val_ds, test_ds
+    return train_ds, test_ds
 
 
 def data_loader(content_path="../data/face", style_path="../data/comics"):
-    train_content_ds, val_content_ds, test_content_ds = create_image_loader(content_path)
-    train_style_ds, val_style_ds, test_style_ds = create_image_loader(style_path)
+    train_content_ds, test_content_ds = create_image_loader(content_path)
+    train_style_ds, test_style_ds = create_image_loader(style_path)
 
     # Zipping the style and content datasets.
     train_ds = (
@@ -111,17 +109,10 @@ def data_loader(content_path="../data/face", style_path="../data/comics"):
         .prefetch(AUTOTUNE)
     )
 
-    val_ds = (
-        tf.data.Dataset.zip((val_content_ds, val_style_ds))
-        .map(preprocess_test_image)
-        .batch(BATCH_SIZE)
-        .prefetch(AUTOTUNE)
-    )
-
     test_ds = (
         tf.data.Dataset.zip((test_content_ds, test_style_ds))
         .map(preprocess_test_image)
         .batch(BATCH_SIZE)
         .prefetch(AUTOTUNE)
     )
-    return train_ds, val_ds, test_ds
+    return train_ds, test_ds
