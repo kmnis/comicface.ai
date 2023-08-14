@@ -3,9 +3,13 @@ import time
 from datetime import datetime
 from tqdm.notebook import tqdm
 
+import matplotlib.pyplot as plt
+
 import tensorflow as tf
 from tensorflow.keras.layers import Input
 from tensorflow.keras.models import Model
+from tensorflow.keras.callbacks import Callback, EarlyStopping
+from tensorflow.keras.utils import array_to_img
 
 from .networks import pix2pix_generator, pix2pix_discriminator, vae_encoder, vae_decoder
 from .data_loader import data_loader, BATCH_SIZE
@@ -115,12 +119,47 @@ class Pix2PixModel(object):
         return self.generator
 
 
+class VAEMonitor(Callback):
+    def __init__(self, sample_content, sample_style, save_path="../saved_models/vae/training_progress/"):
+        self.sample_content = sample_content
+        self.sample_style = sample_style
+        self.save_path = save_path
+
+    def on_epoch_end(self, epoch, logs=None):
+
+        pred = self.model.predict(self.sample_content)
+
+        if epoch % 10 == 0:
+            # Plot the Style, Content and the NST image.
+            fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(9, 3))
+            ax[0].imshow(array_to_img(self.sample_content[0]))
+            ax[0].set_title("Input Image")
+
+            ax[1].imshow(array_to_img(self.sample_style[0]))
+            ax[1].set_title("Ground Truth")
+
+            ax[2].imshow(array_to_img(pred[0]))
+            ax[2].set_title("Predicted Image")
+
+            plt.axis('off')
+            plt.tight_layout()
+            plt.show()
+            plt.close()
+
+        try:
+            img = array_to_img(pred[0])
+            img.save(f'{self.save_path}/{epoch}.png')
+        except Exception as e:
+            print(e)
+            pass
+
+
 class VAE():
     def __init__(self, latent_dim=256):
         self.latent_dim = latent_dim
         self.encoder = vae_encoder(self.latent_dim)
         self.decoder = vae_decoder(self.latent_dim)
-        self.callback = tf.keras.callbacks.EarlyStopping(
+        self.callback = EarlyStopping(
             monitor="val_loss",
             patience=10,
             restore_best_weights=True
@@ -141,6 +180,9 @@ class VAE():
         else:
             train_ds, test_ds = data
         
+        example_input, example_target = next(iter(test_ds.take(1)))
+        train_monitor = VAEMonitor(example_input, example_target)
+        
         # Build and compile the VAE model
         model.compile(optimizer='adam', loss='mean_squared_error')
 
@@ -149,7 +191,7 @@ class VAE():
             train_ds,
             epochs=epochs,
             validation_data=test_ds,
-            callbacks=[self.callback]
+            callbacks=[self.callback, train_monitor]
         )
         
         model.save(save_path)
