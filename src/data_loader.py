@@ -38,7 +38,7 @@ def random_crop(content_image, style_image):
 def normalize(content_image, style_image):
     content_image = (content_image / 127.5) - 1
     
-    if style_image is not None
+    if style_image is not None:
         style_image = (style_image / 127.5) - 1
 
     return content_image, style_image
