@@ -16,14 +16,13 @@ import warnings
 
 warnings.filterwarnings("ignore")
 
-@st.cache_data
+@st.cache_data(show_spinner="Loading the model...")
 def get_model():
     model_path = "models/pix2pix.keras"
     if not os.path.exists(model_path):
         model_path = "../saved_models/pix2pix/pix2pix.keras"
 
-    with st.spinner('Loading the model...'):
-        pix2pix = load_model(model_path)
+    pix2pix = load_model(model_path)
     return pix2pix
 
 st.markdown("<center><h1>ComicBooks.AI</h1></center>", unsafe_allow_html=True)
@@ -40,7 +39,7 @@ if uploaded_file is not None:
     img = tf.expand_dims(img, axis=0)
     
     pix2pix = get_model()
-    st.write("Model Loaded!!! Processing the image...")
-    pred = array_to_img(pix2pix.predict(img)[0] * 0.5 + 0.5)
-    st.image(pred)
-    _ = os.system("rm uploaded_image.png")
+    with st.spinner('Processing the image...'):
+        pred = array_to_img(pix2pix.predict(img)[0] * 0.5 + 0.5)
+        st.image(pred)
+        _ = os.system("rm uploaded_image.png")
