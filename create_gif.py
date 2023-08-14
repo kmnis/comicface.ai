@@ -10,6 +10,8 @@ image_files.sort(key=numeric_sort_key)
 
 print(len(image_files))
 
-images = [Image.open(f) for f in image_files][0:30]
+images = [Image.open(f) for f in image_files]
+images = images[0:20] + images[25:30]
 
-images[0].save("saved_models/pix2pix/training_progress/demo.gif", save_all=True, append_images=images[1:], duration=100, loop=0)
+durations = [150] * (len(images) - 1) + [1000]
+images[0].save("saved_models/pix2pix/training_progress/demo.gif", save_all=True, append_images=images[1:], duration=durations, loop=0)
