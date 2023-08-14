@@ -1,3 +1,7 @@
+.idea/
+saved_models/vae/training_progress/*.png
+saved_models/pix2pix/training_progress/*.png
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
