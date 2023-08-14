@@ -1,6 +1,8 @@
 .idea/
 saved_models/vae/training_progress/*.png
 saved_models/pix2pix/training_progress/*.png
+data/face/*.jpg
+data/comics/*.jpg
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
