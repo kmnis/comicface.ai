@@ -6,34 +6,41 @@ from PIL import Image
 
 import tensorflow as tf
 from tensorflow.keras.models import load_model
-from .data_loader import preprocess_test_image
+from tensorflow.keras.utils import array_to_img
+
+import sys
+sys.path.append(".")
+from data_loader import preprocess_test_image
 
 import warnings
 
 warnings.filterwarnings("ignore")
 
-with st.spinner('Loading the models...'):
-    pix2pix = load_model("../saved_models/pix2pix/pix2pix.keras")
-    vae = load_model("../saved_models/vae/vae.keras")
+@st.cache_data
+def get_model():
+    model_path = "models/pix2pix.keras"
+    if not os.path.exists(model_path):
+        model_path = "../saved_models/pix2pix/pix2pix.keras"
+
+    with st.spinner('Loading the model...'):
+        pix2pix = load_model(model_path)
+    return pix2pix
 
 st.markdown("<center><h1>ComicBooks.AI</h1></center>", unsafe_allow_html=True)
 st.caption("<center>Upload your photo to see how a comic book version of yourself would look!</center>", unsafe_allow_html=True)
 
-model_option = st.selectbox(
-    'Select a model',
-    ('Pix2Pix', 'CVAE')
-)
 uploaded_file = st.file_uploader("Upload an image")
 
 if uploaded_file is not None:
+    img = Image.open(uploaded_file)
+    img.save("uploaded_image.png")
     st.image(uploaded_file)
     
-    img = preprocess_test_image(uploaded_file)
+    img = preprocess_test_image("uploaded_image.png")
+    img = tf.expand_dims(img, axis=0)
     
-    if model_option == "Pix2Pix":
-        model = pix2pix
-    else:
-        model = vae
-    
-    pred = model.predict(img)[0] * 0.5 + 0.5
+    pix2pix = get_model()
+    st.write("Model Loaded!!! Processing the image...")
+    pred = array_to_img(pix2pix.predict(img)[0] * 0.5 + 0.5)
     st.image(pred)
+    _ = os.system("rm uploaded_image.png")
