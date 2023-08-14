@@ -20,8 +20,9 @@ def load_images(image_file):
 def resize(content_image, style_image, height, width):
     content_image = tf.image.resize(content_image, [height, width],
                                     method=tf.image.ResizeMethod.NEAREST_NEIGHBOR)
-    style_image = tf.image.resize(style_image, [height, width],
-                                  method=tf.image.ResizeMethod.NEAREST_NEIGHBOR)
+    if style_image is not None:
+        style_image = tf.image.resize(style_image, [height, width],
+                                      method=tf.image.ResizeMethod.NEAREST_NEIGHBOR)
 
     return content_image, style_image
 
@@ -36,7 +37,9 @@ def random_crop(content_image, style_image):
 
 def normalize(content_image, style_image):
     content_image = (content_image / 127.5) - 1
-    style_image = (style_image / 127.5) - 1
+    
+    if style_image is not None
+        style_image = (style_image / 127.5) - 1
 
     return content_image, style_image
 
@@ -67,15 +70,22 @@ def preprocess_train_image(content_path, style_path):
     return content_image, style_image
 
 
-def preprocess_test_image(content_path, style_path):
+def preprocess_test_image(content_path, style_path=None):
     content_image = load_images(content_path)
-    style_image = load_images(style_path)
+    
+    if style_path is None:
+        style_image = None
+    else:
+        style_image = load_images(style_path)
 
     content_image, style_image = resize(content_image, style_image,
                                         IMG_HEIGHT, IMG_WIDTH)
     content_image, style_image = normalize(content_image, style_image)
 
-    return content_image, style_image
+    if style_image is None:
+        return content_image
+    else:
+        return content_image, style_image
 
 
 def create_image_loader(path):

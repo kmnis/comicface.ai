@@ -93,7 +93,7 @@ class Pix2PixModel(object):
         for epoch in range(self.epochs):
             for input_image, target_image in train_ds:
                 if step % 100 == 0:
-                    generate_images(self.generator, example_input, example_target, self.save_path, step // 100)
+                    generate_images(self.generator, example_input, example_target, self.save_path, step)
 
                 gen_loss, disc_loss = self.train_step(input_image, target_image)
 

@@ -37,7 +37,7 @@ def generate_images(model, test_input, target, save_path, step):
 
     try:
         img = array_to_img(prediction[0] * 0.5 + 0.5)
-        img.save(f'{save_path}/{step}.png')
+        img.save(f'{save_path}/{step//100}.png')
     except Exception as e:
         print(e)
         pass
