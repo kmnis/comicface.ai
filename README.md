@@ -1,11 +1,8 @@
 # Turn Your Photos Into A Comic Book
 
-<br />
-<div align="center">
 <a target="_blank" href="https://huggingface.co/spaces/kmnis/comicface.ai">
   <img src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Demo-blue" alt="Open HuggingFace"/>
 </a>
-</div>
 
 ## Table of contents
 1. [Directory Structure](#dir)
@@ -14,12 +11,13 @@
 4. [Results](#results)
 
 ## Directory Structure <a name="dir"></a>
-```
-comicface-ai
-|__ data: The training dataset will go here. A few sample images are added for reference
-|__ src: Model architecture, data loading, and other utility scripts are saved here
-|__ notebooks: The notebooks show an end-to-end pipeline to train and infer the models. The notebook names are self-explanatory
-|__ saved_models: Trained models
+
+```graphql
+./comicface-ai/*
+  ├─ data - # The training dataset will go here. A few sample images are added for reference
+  ├─ src - # Model architecture, data loading, and other utility scripts are saved here
+  ├─ notebooks - # The notebooks show an end-to-end pipeline to train and infer the models. The notebook names are self-explanatory
+  ├─ saved_models - # Trained models
 ```
 
 ## Dataset <a name="dataset"></a>
