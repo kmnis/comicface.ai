@@ -154,7 +154,7 @@ class VAEMonitor(Callback):
             pass
 
 
-class VAE():
+class CVAE():
     def __init__(self, latent_dim=256):
         self.latent_dim = latent_dim
         self.encoder = vae_encoder(self.latent_dim)
@@ -164,6 +164,7 @@ class VAE():
             patience=10,
             restore_best_weights=True
         )
+        self.model = self.build_vae()
         
     def build_vae(self):
         encoder_input = Input(shape=(256, 256, 3))
@@ -173,7 +174,6 @@ class VAE():
         return vae
     
     def train(self, data=None, epochs=100, save_path="../saved_models/vae/vae.keras"):
-        model = self.build_vae()
         
         if data is None:
             train_ds, test_ds = data_loader()
@@ -184,18 +184,18 @@ class VAE():
         train_monitor = VAEMonitor(example_input, example_target)
         
         # Build and compile the VAE model
-        model.compile(optimizer='adam', loss='mean_squared_error')
+        self.model.compile(optimizer='adam', loss='mean_squared_error')
 
         # Train the VAE model with validation
-        history = model.fit(
+        history = self.model.fit(
             train_ds,
             epochs=epochs,
             validation_data=test_ds,
             callbacks=[self.callback, train_monitor]
         )
         
-        model.save(save_path)
-        return history, model
+        self.model.save(save_path)
+        return history, self.model
 
 
 if __name__ == "__main__":
@@ -204,5 +204,5 @@ if __name__ == "__main__":
     model.train()
     
     # Train VAE model
-    # vae_model = VAE()
+    # vae_model = CVAE()
     # model = vae_model.train()

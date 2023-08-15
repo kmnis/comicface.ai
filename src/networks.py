@@ -125,11 +125,34 @@ def sampling(args):
     return z_mean + tf.exp(0.5 * z_log_var) * epsilon
 
 
-def vae_encoder(latent_dim):
+def cvae_encoder_block(x, filters):
+    x = Conv2D(
+        filters, (3, 3), strides=2, padding='same',
+        kernel_initializer = tf.random_normal_initializer(0., 0.02)
+    )(x)
+    x = tf.keras.layers.ReLU()(x)
+    return x
+
+
+def cvae_decoder_block(x, filters, strides, dropout=None):
+    x = Conv2DTranspose(
+        filters, (3, 3), strides=strides, padding='same',
+        kernel_initializer = tf.random_normal_initializer(0., 0.02)
+    )(x)
+    x = tf.keras.layers.BatchNormalization()(x)
+    if dropout is not None:
+        x = tf.keras.layers.Dropout(dropout)(x)
+    x = tf.keras.layers.ReLU()(x)
+    return x
+
+
+def cvae_encoder(latent_dim):
     encoder_input = Input(shape=(256, 256, 3))
-    x = Conv2D(32, (3, 3), activation='relu', strides=2, padding='same')(encoder_input)
-    x = Conv2D(64, (3, 3), activation='relu', strides=2, padding='same')(x)
-    x = Conv2D(256, (3, 3), activation='relu', strides=2, padding='same')(x)
+    
+    x = vae_encoder_block(encoder_input, 32)
+    x = vae_encoder_block(x, 64)
+    x = vae_encoder_block(x, 256)
+    
     x = Flatten()(x)
 
     z_mean = Dense(latent_dim)(x)
@@ -141,14 +164,19 @@ def vae_encoder(latent_dim):
     return encoder
 
 
-def vae_decoder(latent_dim):
+def cvae_decoder(latent_dim):
     decoder_input = Input(shape=(latent_dim,))
     x = Dense(16 * 16 * 256)(decoder_input)
     x = Reshape((16, 16, 256))(x)
-    x = Conv2DTranspose(256, (3, 3), activation='relu', strides=2, padding='same')(x)
-    x = Conv2DTranspose(64, (3, 3), activation='relu', strides=2, padding='same')(x)
-    x = Conv2DTranspose(32, (3, 3), activation='relu', strides=4, padding='same')(x)
-    decoder_output = Conv2DTranspose(3, (3, 3), padding='same', activation="tanh")(x)
+    
+    x = vae_decoder_block(x, 256, 2, 0.3)
+    x = vae_decoder_block(x, 64, 2, 0.2)
+    x = vae_decoder_block(x, 32, 2)
+    
+    decoder_output = Conv2DTranspose(
+        3, (3, 3), strides=2, padding='same', activation="tanh",
+        kernel_initializer = tf.random_normal_initializer(0., 0.02)
+    )(x)
 
     decoder = Model(decoder_input, decoder_output, name='decoder')
     return decoder
