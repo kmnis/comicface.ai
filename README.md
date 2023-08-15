@@ -1,5 +1,12 @@
 # Turn Your Photos Into A Comic Book
 
+<br />
+<div align="center">
+<a target="_blank" href="https://huggingface.co/spaces/kmnis/comicface.ai">
+  <img src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Demo-blue" alt="Open HuggingFace"/>
+</a>
+</div>
+
 ## Table of contents
 1. [Directory Structure](#dir)
 2. [Dataset](#dataset)
