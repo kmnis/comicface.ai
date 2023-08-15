@@ -8,6 +8,7 @@
 
 ## Directory Structure <a name="dir"></a>
 ```
+comicface-ai
 |__ data: The training dataset will go here. A few sample images are added for reference
 |__ src: Model architecture, data loading, and other utility scripts are saved here
 |__ notebooks: The notebooks show an end-to-end pipeline to train and infer the models. The notebook names are self-explanatory
