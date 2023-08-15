@@ -21,9 +21,9 @@
 ```
 
 ## Dataset <a name="dataset"></a>
-The dataset is sourced from [Kaggle](https://www.kaggle.com/datasets/defileroff/comic-faces-paired-synthetic-v2) and contains 10,000 pairs of face and their comic version. Each image is of 1024x1024 dimensions.
+The dataset is sourced from [Kaggle](https://www.kaggle.com/datasets/defileroff/comic-faces-paired-synthetic-v2) and contains 10,000 pairs of faces and their comic version. Each image is of 1024x1024 dimensions.
 
-![Sample Image](https://github.com/kmnis/comicface-ai/assets/20987291/a1e9c4b7-b89b-482f-9dcd-ac424116ce5e)
+<img width=300 src="https://github.com/kmnis/comicface.ai/assets/20987291/bf3c3a81-2675-4694-b9d8-293d29614a19" />
 
 ## Models <a name="models"></a>
 Two different model architectures are tried for training: Convolutional Variational Autoencoder and Pix2Pix GAN.
