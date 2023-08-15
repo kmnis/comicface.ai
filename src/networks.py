@@ -125,7 +125,7 @@ def sampling(args):
     return z_mean + tf.exp(0.5 * z_log_var) * epsilon
 
 
-def cvae_encoder_block(x, filters):
+def vae_encoder_block(x, filters):
     x = Conv2D(
         filters, (3, 3), strides=2, padding='same',
         kernel_initializer = tf.random_normal_initializer(0., 0.02)
@@ -134,7 +134,7 @@ def cvae_encoder_block(x, filters):
     return x
 
 
-def cvae_decoder_block(x, filters, strides, dropout=None):
+def vae_decoder_block(x, filters, strides, dropout=None):
     x = Conv2DTranspose(
         filters, (3, 3), strides=strides, padding='same',
         kernel_initializer = tf.random_normal_initializer(0., 0.02)
@@ -146,7 +146,7 @@ def cvae_decoder_block(x, filters, strides, dropout=None):
     return x
 
 
-def cvae_encoder(latent_dim):
+def vae_encoder(latent_dim):
     encoder_input = Input(shape=(256, 256, 3))
     
     x = vae_encoder_block(encoder_input, 32)
@@ -164,7 +164,7 @@ def cvae_encoder(latent_dim):
     return encoder
 
 
-def cvae_decoder(latent_dim):
+def vae_decoder(latent_dim):
     decoder_input = Input(shape=(latent_dim,))
     x = Dense(16 * 16 * 256)(decoder_input)
     x = Reshape((16, 16, 256))(x)
