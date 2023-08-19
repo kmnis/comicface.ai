@@ -23,7 +23,7 @@
 ## Dataset <a name="dataset"></a>
 The dataset is sourced from [Kaggle](https://www.kaggle.com/datasets/defileroff/comic-faces-paired-synthetic-v2) and contains 10,000 pairs of faces and their comic version. Each image is of 1024x1024 dimensions.
 
-<img width=300 src="https://github.com/kmnis/comicface.ai/assets/20987291/bf3c3a81-2675-4694-b9d8-293d29614a19" />
+<img width=300 src="assets/sample-data.jpg" />
 
 ## Models <a name="models"></a>
 Two different model architectures are tried for training: Convolutional Variational Autoencoder and Pix2Pix GAN.
@@ -33,11 +33,11 @@ Two different model architectures are tried for training: Convolutional Variatio
 <table>
   <tr>
     <td>
-      <img src="https://github.com/kmnis/comicface-ai/assets/20987291/8172ff0d-8208-4d88-a646-d880ff61739a" alt="Model Architecture" width="500"/>
+      <img src="assets/vae-model-arch.png" alt="Model Architecture" width="500"/>
       <p align="center"><em>Model Architecture</em></p>
     </td>
     <td>
-      <img src="saved_models/vae/training_progress/vae_training.gif" alt="Image 2"/>
+      <img src="saved_models/vae/training_progress/vae_training.gif" alt="Training Progress"/>
       <p align="center"><em>Convolutional VAE Training</em></p>
     </td>
   </tr>
@@ -48,11 +48,11 @@ Two different model architectures are tried for training: Convolutional Variatio
 <table>
   <tr>
     <td>
-      <img src="https://github.com/kmnis/comicface-ai/assets/20987291/b2123082-a1f0-4094-adec-4585a3d8a6bb" alt="Model Architecture" width="500"/>
+      <img src="assets/pix2pix-model-arch.png" alt="Model Architecture" width="500"/>
       <p align="center"><em>Model Architecture</em></p>
     </td>
     <td>
-      <img src="saved_models/pix2pix/training_progress/pix2pix_training.gif" alt="Image 2"/>
+      <img src="saved_models/pix2pix/training_progress/pix2pix_training.gif" alt="Pix2Pix GAN Training" />
       <p align="center"><em>Pix2Pix GAN Training</em></p>
     </td>
   </tr>
@@ -63,7 +63,7 @@ Two different model architectures are tried for training: Convolutional Variatio
 <table>
   <tr>
     <td>
-      <img src="https://github.com/kmnis/comicface-ai/assets/20987291/0a163dc0-6fb5-4e13-b80e-f7e855bf9055" alt="Model Architecture" width="100%"/>
+      <img src="assets/vae-sample-results.png" alt="Convolutional VAE Sample Results" width="100%"/>
       <p align="center"><em>Convolutional VAE Sample Results</em></p>
     </td>
   </tr>
@@ -72,7 +72,7 @@ Two different model architectures are tried for training: Convolutional Variatio
 <table>
   <tr>
     <td>
-      <img src="https://github.com/kmnis/comicface-ai/assets/20987291/b919f988-7e60-4f88-96dc-460b7e2767b0" alt="Model Architecture" width="100%"/>
+      <img src="assets/pix2pix-sample-results.png" alt="Pix2Pix GAN Sample Results" width="100%"/>
       <p align="center"><em>Pix2Pix GAN Sample Results</em></p>
     </td>
   </tr>
